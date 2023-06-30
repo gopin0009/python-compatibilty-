@@ -1,0 +1,29 @@
+import playwright
+import json
+import csv
+import asyncio
+from playwright.sync_api import sync_playwright
+
+
+async def main():
+    with open('g2crowd_urls.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            company_details = await scrape_g2crowd(row[0])
+            print(json.dumps(company_details))
+
+async def scrape_g2crowd(url):
+    browser = playwright.chromium.launch(headless=False)
+    page = browser.new_page()
+    page.wait_for_timeout(10000)
+
+    company_details = {}
+    company_details["name"] = await page.evaluate("document.querySelector('.g2-company-header__name').textContent")
+    company_details["rating"] = await page.evaluate("document.querySelector('.g2-company-header__rating').textContent")
+    company_details["reviews"] = await page.evaluate("document.querySelector('.g2-company-header__reviews').textContent")
+
+    await browser.close()
+    return company_details
+
+if __name__ == '__main__':
+    asyncio.run(main())

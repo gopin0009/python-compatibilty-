@@ -27,3 +27,6 @@ async def scrape_g2crowd(url):
 
 if __name__ == '__main__':
     asyncio.run(main())
+
+
+we have to install the playwright package before running the above code and G2crowd_urls.csv has to be placed wit urllist
